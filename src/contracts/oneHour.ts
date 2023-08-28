@@ -102,7 +102,9 @@ export class OneHour extends SmartContract {
         //ensure seller receives the asking price
         let outputs: ByteString = this.buildStateOutput(this.ctx.utxo.value)
         outputs += Utils.buildPublicKeyHashOutput(seller, this.price)
-        outputs += this.buildChangeOutput()
+        if (this.changeAmount > 0n) {
+            outputs += this.buildChangeOutput()
+        }
         assert(
             this.ctx.hashOutputs === hash256(outputs),
             'hashOutputs mismatch'
