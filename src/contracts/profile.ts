@@ -37,6 +37,9 @@ export class Profile extends SmartContract {
     @prop(true)
     links: HashedSet<ByteString>
 
+    @prop(true)
+    settings: HashedMap<ByteString, ByteString>
+
     constructor(
         version: ByteString,
         owner: PubKey,
@@ -45,7 +48,8 @@ export class Profile extends SmartContract {
         avatar: ByteString,
         cover: ByteString,
         socials: HashedMap<ByteString, ByteString>,
-        links: HashedSet<ByteString>
+        links: HashedSet<ByteString>,
+        settings: HashedMap<ByteString, ByteString>
     ) {
         super(...arguments)
         this.version = version
@@ -56,6 +60,7 @@ export class Profile extends SmartContract {
         this.cover = cover
         this.socials = socials
         this.links = links
+        this.settings = settings
     }
 
     @method(SigHash.SINGLE)
@@ -131,7 +136,7 @@ export class Profile extends SmartContract {
     }
 
     @method(SigHash.SINGLE)
-    public removeKeySocial(key: ByteString, sig: Sig) {
+    public removeKeySocials(key: ByteString, sig: Sig) {
         // check signature
         assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
@@ -147,7 +152,7 @@ export class Profile extends SmartContract {
     }
 
     @method(SigHash.SINGLE)
-    public deleteSocials(sig: Sig) {
+    public clearSocials(sig: Sig) {
         // check signature
         assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
@@ -201,6 +206,54 @@ export class Profile extends SmartContract {
 
         // add data
         this.links.clear()
+
+        // make sure balance in the contract does not change
+        const amount: bigint = this.ctx.utxo.value
+        // output containing the latest state
+        const output: ByteString = this.buildStateOutput(amount)
+        // verify current tx has this single output
+        assert(this.ctx.hashOutputs === hash256(output), 'hashOutputs mismatch')
+    }
+
+    @method(SigHash.SINGLE)
+    public updateSettings(key: ByteString, value: ByteString, sig: Sig) {
+        // check signature
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
+
+        // add data
+        this.settings.set(key, value)
+
+        // make sure balance in the contract does not change
+        const amount: bigint = this.ctx.utxo.value
+        // output containing the latest state
+        const output: ByteString = this.buildStateOutput(amount)
+        // verify current tx has this single output
+        assert(this.ctx.hashOutputs === hash256(output), 'hashOutputs mismatch')
+    }
+
+    @method(SigHash.SINGLE)
+    public removeKeySettings(key: ByteString, sig: Sig) {
+        // check signature
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
+
+        // add data
+        this.settings.delete(key)
+
+        // make sure balance in the contract does not change
+        const amount: bigint = this.ctx.utxo.value
+        // output containing the latest state
+        const output: ByteString = this.buildStateOutput(amount)
+        // verify current tx has this single output
+        assert(this.ctx.hashOutputs === hash256(output), 'hashOutputs mismatch')
+    }
+
+    @method(SigHash.SINGLE)
+    public clearSettings(sig: Sig) {
+        // check signature
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
+
+        // add data
+        this.settings.clear()
 
         // make sure balance in the contract does not change
         const amount: bigint = this.ctx.utxo.value
