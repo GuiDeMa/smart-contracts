@@ -100,11 +100,13 @@ export class OneHour extends SmartContract {
         this.pubKeyHash = pubKeyHash
 
         //ensure seller receives the asking price
-        const output: ByteString = Utils.buildPublicKeyHashOutput(
-            seller,
-            this.price
+        let outputs: ByteString = this.buildStateOutput(this.ctx.utxo.value)
+        outputs += Utils.buildPublicKeyHashOutput(seller, this.price)
+        outputs += this.buildChangeOutput()
+        assert(
+            this.ctx.hashOutputs === hash256(outputs),
+            'hashOutputs mismatch'
         )
-        assert(this.ctx.hashOutputs === hash256(output), 'hashOutputs mismatch')
     }
 
     @method()
@@ -180,10 +182,15 @@ export class OneHour extends SmartContract {
     }
 
     @method()
-    public blame(author: PubKey, target: PubKey, reason: ByteString, sig: Sig) {
+    public dispute(
+        author: PubKey,
+        target: PubKey,
+        reason: ByteString,
+        sig: Sig
+    ) {
         assert(
             author === this.owner || author === this.creator,
-            'only token owner and creator are allowed to blame'
+            'only token owner and creator are allowed to dispute'
         )
         assert(this.checkSig(sig, author), `checkSig failed, pubKey:${author}`)
 
