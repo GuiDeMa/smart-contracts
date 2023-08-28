@@ -17,7 +17,7 @@ export class Profile extends SmartContract {
     version: ByteString
 
     @prop()
-    xpub: PubKey
+    owner: PubKey
 
     @prop(true)
     name: ByteString
@@ -39,7 +39,7 @@ export class Profile extends SmartContract {
 
     constructor(
         version: ByteString,
-        xpub: PubKey,
+        owner: PubKey,
         name: ByteString,
         bio: ByteString,
         avatar: ByteString,
@@ -49,7 +49,7 @@ export class Profile extends SmartContract {
     ) {
         super(...arguments)
         this.version = version
-        this.xpub = xpub
+        this.owner = owner
         this.name = name
         this.bio = bio
         this.avatar = avatar
@@ -61,7 +61,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public udptateName(newName: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
         // update data
         this.name = newName
         // make sure balance in the contract does not change
@@ -75,7 +75,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public udptateBio(newBio: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
         // update data
         this.bio = newBio
         // make sure balance in the contract does not change
@@ -89,7 +89,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public udptateAvatar(newAvatar: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
         // update data
         this.avatar = newAvatar
         // make sure balance in the contract does not change
@@ -103,7 +103,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public updateCover(newCover: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
         // update data
         this.cover = newCover
         // make sure balance in the contract does not change
@@ -117,7 +117,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public updateSocials(key: ByteString, value: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
         // add data
         this.socials.set(key, value)
@@ -133,7 +133,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public removeKeySocial(key: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
         // add data
         this.socials.delete(key)
@@ -149,7 +149,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public deleteSocials(sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
         // add data
         this.socials.clear()
@@ -165,7 +165,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public addLink(link: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
         // add data
         this.links.add(link)
@@ -181,7 +181,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public removeLink(link: ByteString, sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
         // add data
         this.links.delete(link)
@@ -197,7 +197,7 @@ export class Profile extends SmartContract {
     @method(SigHash.SINGLE)
     public clearLinks(sig: Sig) {
         // check signature
-        assert(this.checkSig(sig, this.xpub), `checkSig failed`)
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
         // add data
         this.links.clear()
