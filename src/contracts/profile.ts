@@ -32,6 +32,9 @@ export class Profile extends SmartContract {
     cover: ByteString
 
     @prop(true)
+    location: ByteString
+
+    @prop(true)
     socials: HashedMap<ByteString, ByteString> // key/value pair (ex: "twitter", "https://twitter.com/1aristot3lis")
 
     @prop(true)
@@ -47,6 +50,7 @@ export class Profile extends SmartContract {
         bio: ByteString,
         avatar: ByteString,
         cover: ByteString,
+        location: ByteString,
         socials: HashedMap<ByteString, ByteString>,
         links: HashedSet<ByteString>,
         settings: HashedMap<ByteString, ByteString>
@@ -58,6 +62,7 @@ export class Profile extends SmartContract {
         this.bio = bio
         this.avatar = avatar
         this.cover = cover
+        this.location = location
         this.socials = socials
         this.links = links
         this.settings = settings
@@ -111,6 +116,20 @@ export class Profile extends SmartContract {
         assert(this.checkSig(sig, this.owner), `checkSig failed`)
         // update data
         this.cover = newCover
+        // make sure balance in the contract does not change
+        const amount: bigint = this.ctx.utxo.value
+        // output containing the latest state
+        const output: ByteString = this.buildStateOutput(amount)
+        // verify current tx has this single output
+        assert(this.ctx.hashOutputs === hash256(output), 'hashOutputs mismatch')
+    }
+
+    @method(SigHash.SINGLE)
+    public updateLocation(newLocation: ByteString, sig: Sig) {
+        // check signature
+        assert(this.checkSig(sig, this.owner), `checkSig failed`)
+        // update data
+        this.cover = newLocation
         // make sure balance in the contract does not change
         const amount: bigint = this.ctx.utxo.value
         // output containing the latest state
