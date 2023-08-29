@@ -80,4 +80,13 @@ export class Profile extends SmartContract {
         // verify current tx has this single output
         assert(this.ctx.hashOutputs === hash256(output), 'hashOutputs mismatch')
     }
+
+    @method()
+    public burnProfile(sig: Sig) {
+        // check signature
+        assert(
+            this.checkSig(sig, this.owner),
+            `checkSig failed, pubkey: ${this.owner}`
+        )
+    }
 }
