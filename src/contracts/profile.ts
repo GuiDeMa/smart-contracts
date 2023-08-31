@@ -1,5 +1,5 @@
-import { assert } from 'console'
 import {
+    assert,
     ByteString,
     HashedMap,
     hash256,
