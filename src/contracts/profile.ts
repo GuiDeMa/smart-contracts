@@ -2,7 +2,6 @@ import { assert } from 'console'
 import {
     ByteString,
     HashedMap,
-    HashedSet,
     hash256,
     PubKey,
     Sig,
@@ -54,7 +53,7 @@ export class Profile extends SmartContract {
         // check signature
         assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
-        // add data
+        // remove key
         this.settings.delete(key)
 
         // make sure balance in the contract does not change
@@ -70,7 +69,7 @@ export class Profile extends SmartContract {
         // check signature
         assert(this.checkSig(sig, this.owner), `checkSig failed`)
 
-        // add data
+        // clear settings
         this.settings.clear()
 
         // make sure balance in the contract does not change
